@@ -1,12 +1,19 @@
 package az.edu.ada.wm2.lab6.model;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
 
     @Id
@@ -14,44 +21,7 @@ public class Category {
 
     private String name;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "categories")
-    private Set<Product> products = new HashSet<>();
-
-    public Category() {
-        this.id = UUID.randomUUID();
-    }
-
-    public Category(String name) {
-        this.id = UUID.randomUUID();
-        this.name = name;
-    }
-
-    public Category(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
-    }
+    private List<Product> products = new ArrayList<>();
 }

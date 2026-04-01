@@ -4,11 +4,13 @@ import az.edu.ada.wm2.lab6.model.Product;
 import az.edu.ada.wm2.lab6.model.dto.ProductRequestDto;
 import az.edu.ada.wm2.lab6.model.dto.ProductResponseDto;
 import az.edu.ada.wm2.lab6.model.mapper.ProductMapper;
+import az.edu.ada.wm2.lab6.repository.CategoryRepository;
 import az.edu.ada.wm2.lab6.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,18 +18,33 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
 
     public ProductServiceImpl(ProductRepository productRepository,
+                              CategoryRepository categoryRepository,
                               ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
         this.productMapper = productMapper;
     }
 
     @Override
     public ProductResponseDto createProduct(ProductRequestDto dto) {
+        if (dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
+
         Product product = productMapper.toEntity(dto);
-        product.setId(UUID.randomUUID());
+
+        if (dto.getCategoryIds() != null) {
+            product.setCategories(
+                    new ArrayList<>(
+                            categoryRepository.findAllById(dto.getCategoryIds())
+                    )
+            );
+        }
+
         Product saved = productRepository.save(product);
         return productMapper.toResponseDto(saved);
     }
@@ -36,6 +53,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDto getProductById(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+
         return productMapper.toResponseDto(product);
     }
 
@@ -49,6 +67,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDto updateProduct(UUID id, ProductRequestDto dto) {
+        if (dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
+
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -62,7 +84,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID id) {
-        productRepository.deleteById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        productRepository.delete(product);
     }
 
     @Override
