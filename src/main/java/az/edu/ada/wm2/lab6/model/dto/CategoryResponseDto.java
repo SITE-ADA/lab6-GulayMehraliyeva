@@ -10,7 +10,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class CategoryResponseDto {
-
     private UUID id;
     private String name;
 }

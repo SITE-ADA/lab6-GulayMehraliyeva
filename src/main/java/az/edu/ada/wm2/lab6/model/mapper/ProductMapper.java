@@ -19,11 +19,8 @@ public interface ProductMapper {
     @Mapping(target = "categories", ignore = true)
     Product toEntity(ProductRequestDto dto);
 
-    default List<String> map(List<Category> categories) {
-        if (categories == null) {
-            return List.of();
-        }
-
+    default List<String> mapCategoriesToNames(List<Category> categories) {
+        if (categories == null) return List.of();
         return categories.stream()
                 .map(Category::getName)
                 .toList();

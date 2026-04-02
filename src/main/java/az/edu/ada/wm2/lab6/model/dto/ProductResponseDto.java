@@ -4,7 +4,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,12 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ProductResponseDto {
-
     private UUID id;
     private String productName;
     private BigDecimal price;
     private LocalDate expirationDate;
-
-    @Builder.Default
-    private List<String> categoryNames = new ArrayList<>();
+    private List<String> categoryNames;
 }

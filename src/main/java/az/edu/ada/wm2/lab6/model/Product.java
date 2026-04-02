@@ -16,23 +16,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Product {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String productName;
-
     private BigDecimal price;
-
     private LocalDate expirationDate;
 
-    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @Builder.Default
     private List<Category> categories = new ArrayList<>();
 }

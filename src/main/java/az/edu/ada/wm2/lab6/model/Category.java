@@ -14,14 +14,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "products")
 public class Category {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
 
-    @Builder.Default
     @ManyToMany(mappedBy = "categories")
+    @Builder.Default
     private List<Product> products = new ArrayList<>();
 }
